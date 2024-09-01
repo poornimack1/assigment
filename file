@@ -1,1 +1,48 @@
+pipeline {
+    agent any
 
+    environment {
+        
+        REPO_URL = 'https://github.com/poornimack1/assigment.git'
+        BRANCH = 'main'                             
+    }
+
+    stages {
+	
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+                sh './build.sh' 
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh './test.sh' 
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+                sh './deploy.sh'  
+            }
+        }
+
+        stage('Commit Changes') {
+            steps {
+                script {
+				
+                    sh '''
+                    git add .
+                    git commit -m "Automated commit from Jenkins after deploy"
+                    git push origin ${BRANCH}
+                    '''
+                }
+            }
+        }
+    }
+
+    
+}
